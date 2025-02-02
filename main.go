@@ -9,6 +9,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/joho/godotenv"
 )
 
@@ -44,4 +45,18 @@ func main() {
 
 	fmt.Println("Server listening on port :8080")
 	log.Fatal(http.ListenAndServeTLS(":8080", "server.crt", "server.key", r))
+}
+
+func authenticate(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		signedToken := r.Header.Get("Authorization")
+		token, err := jwt.ParseWithClaims(signedToken, &jwt.RegisteredClaims{}, func(t *jwt.Token) (interface{}, error) {
+			return jwtKey, nil
+		})
+		if err != nil || !token.Valid {
+			respondWithError(w, http.StatusUnauthorized, "Unauthorized")
+			return
+		}
+		next.ServeHTTP(w, r)
+	}
 }
