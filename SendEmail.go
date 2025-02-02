@@ -1,6 +1,7 @@
 package main
 
 import (
+	"html/template"
 	"log"
 	"net/http"
 	"os"
@@ -27,8 +28,20 @@ func sendEmail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	m.Subject("Thankyou for contacting me")
-	reply := "Hi " + data.Name + ",\n I read your message and will reach you back ASAP! :-D"
-	m.SetBodyString(mail.TypeTextPlain, reply)
+	// Parse the HTML template
+	tpl, err := template.ParseFiles("email_template.html")
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Failed to parse HTML template")
+		log.Fatalf("Failed to parse HTML template: %s", err)
+		return
+	}
+
+	// Set the email body to the generated HTML content using the template and data
+	if err := m.SetBodyHTMLTemplate(tpl, data); err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Failed to set HTML template mail body")
+		log.Fatalf("Failed to set HTML template mail body: %s", err)
+		return
+	}
 
 	//Setting up mail client
 
