@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -12,6 +13,8 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/joho/godotenv"
+
+	"mailingService/models"
 )
 
 var jwtKey = []byte(os.Getenv("JWT_KEY"))
@@ -42,7 +45,7 @@ func main() {
 	r.Use(middleware.Recoverer)
 
 	r.Post("/api/getToken", getToken)
-	r.Post("/api/sendEmail", sendEmail)
+	r.Post("/api/sendEmail", validateEmail(sendEmail))
 
 	fmt.Println("Server listening on port :8080")
 	log.Fatal(http.ListenAndServeTLS(":8080", "server.crt", "server.key", r))
@@ -64,12 +67,10 @@ func authenticate(next http.HandlerFunc) http.HandlerFunc {
 
 func validateEmail(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var data struct {
-			Email   string `json:"email"`
-			Message string `json:"message"`
-			Name    string `json:"name"`
-		}
+		var data models.EmailData
 		err := json.NewDecoder(r.Body).Decode(&data)
+
+		log.Printf("Data in validation is : %v", data)
 		if err != nil {
 			respondWithError(w, http.StatusBadRequest, "Invalid format")
 			return
@@ -99,6 +100,9 @@ func validateEmail(next http.HandlerFunc) http.HandlerFunc {
 			respondWithError(w, http.StatusBadRequest, "Role-based email addresses are not allowed")
 			return
 		}
+
+		ctx := context.WithValue(r.Context(), "emailData", data)
+		r = r.WithContext(ctx)
 
 		next.ServeHTTP(w, r)
 	}
