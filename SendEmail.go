@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"html/template"
 	"log"
 	"net/http"
@@ -14,6 +15,18 @@ import (
 var data models.EmailData
 
 func sendEmail(w http.ResponseWriter, r *http.Request) {
+
+	// extract data from request body
+	err := json.NewDecoder(r.Body).Decode(&data)
+
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid format")
+		log.Fatalf("Failed to decode request body: %s", err)
+		return
+	}
+
+	// print the data to the console
+	log.Printf("Data: %v", data)
 
 	//Setting up the message body
 	var email = os.Getenv("EMAIL")
