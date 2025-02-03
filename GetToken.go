@@ -30,7 +30,7 @@ func getToken(w http.ResponseWriter, r *http.Request) {
 		ExpiresAt: jwt.NewNumericDate(time.Now().Add(expirationTime)),
 		IssuedAt:  jwt.NewNumericDate(time.Now()),
 	}
-	var jwtKey = []byte(os.Getenv("JWT_KEY"))
+	// var jwtKey = []byte(os.Getenv("JWT_KEY"))
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	signedToken, err := token.SignedString(jwtKey)
 	if err != nil {
