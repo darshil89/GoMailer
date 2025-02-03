@@ -17,7 +17,7 @@ func sendEmail(w http.ResponseWriter, r *http.Request) {
 
 	data, ok := r.Context().Value("emailData").(models.EmailData)
 	if !ok {
-		respondWithError(w, http.StatusInternalServerError, "Failed to retrieve email data")
+		respondWithError(w, http.StatusInternalServerError, "Failed to retrieve email data in send email function")
 		return
 	}
 
