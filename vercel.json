@@ -1,6 +1,16 @@
 {
+    "version": 2,
+    "builds": [
+      {
+        "src": "api/*.go",
+        "use": "@vercel/go"
+      }
+    ],
     "routes": [
-        { "src": "/api/GetToken", "dest": "/api/GetToken" },
-        { "src": "/api/SendMail", "dest": "/api/SendMail" }
+      {
+        "src": "/api/(.*)",
+        "dest": "/api/$1"
+      }
     ]
-}
+  }
+  
