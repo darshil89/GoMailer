@@ -44,6 +44,9 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
+	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "Mailing Service is up and running")
+	})
 	r.Post("/api/getToken", getToken)
 	r.Post("/api/sendEmail", authenticate(validateEmail(sendEmail)))
 
