@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -31,6 +32,8 @@ func GetToken(w http.ResponseWriter, r *http.Request) {
 		IssuedAt:  jwt.NewNumericDate(time.Now()),
 	}
 	var jwtKey = []byte(os.Getenv("JWT_KEY"))
+
+	log.Printf("JWT key in getToken : %v", jwtKey)
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	signedToken, err := token.SignedString(jwtKey)
