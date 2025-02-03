@@ -11,19 +11,6 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func respondWithError(w http.ResponseWriter, code int, msg string) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-	json.NewEncoder(w).Encode(map[string]string{"error": msg})
-}
-
-// helper function to respond with success
-func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-	json.NewEncoder(w).Encode(payload)
-}
-
 func GetToken(w http.ResponseWriter, r *http.Request) {
 	var creds models.Credentials
 	err := json.NewDecoder(r.Body).Decode(&creds)
