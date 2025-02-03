@@ -1,6 +1,7 @@
 {
     "routes": [
-        { "src": "/api/getToken", "dest": "/api/GetToken" },
-        { "src": "/api/sendMail", "dest": "/api/SendMail" }
+        { "src": "/api/GetToken", "dest": "/api/GetToken" },
+        { "src": "/api/SendMail", "dest": "/api/SendMail" },
+        { "src": "/api/Response", "dest": "/api/Response" }
     ]
 }
