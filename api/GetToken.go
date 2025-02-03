@@ -16,11 +16,11 @@ func GetToken(w http.ResponseWriter, r *http.Request) {
 	var creds models.Credentials
 	err := json.NewDecoder(r.Body).Decode(&creds)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid format")
+		RespondWithError(w, http.StatusBadRequest, "Invalid format")
 		return
 	}
 	if creds.Secret != os.Getenv("SECRET") {
-		respondWithError(w, http.StatusUnauthorized, "Unauthorised")
+		RespondWithError(w, http.StatusUnauthorized, "Unauthorised")
 		return
 	}
 
@@ -38,7 +38,7 @@ func GetToken(w http.ResponseWriter, r *http.Request) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	signedToken, err := token.SignedString(jwtKey)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "Failed to generate token")
+		RespondWithError(w, http.StatusInternalServerError, "Failed to generate token")
 		return
 	}
 	response := struct {
@@ -46,5 +46,5 @@ func GetToken(w http.ResponseWriter, r *http.Request) {
 	}{
 		Token: signedToken,
 	}
-	respondWithJSON(w, http.StatusAccepted, response)
+	RespondWithJSON(w, http.StatusAccepted, response)
 }
