@@ -1,8 +1,7 @@
-package main
+package handler
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"os"
 	"time"
@@ -11,6 +10,19 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 )
+
+func respondWithError(w http.ResponseWriter, code int, msg string) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	json.NewEncoder(w).Encode(map[string]string{"error": msg})
+}
+
+// helper function to respond with success
+func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	json.NewEncoder(w).Encode(payload)
+}
 
 func GetToken(w http.ResponseWriter, r *http.Request) {
 	var creds models.Credentials
@@ -23,7 +35,6 @@ func GetToken(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusUnauthorized, "Unauthorised")
 		return
 	}
-	log.Printf("JWT Token: %s", jwtKey)
 
 	expirationTime := time.Hour
 	claims := &jwt.RegisteredClaims{
@@ -32,7 +43,7 @@ func GetToken(w http.ResponseWriter, r *http.Request) {
 		ExpiresAt: jwt.NewNumericDate(time.Now().Add(expirationTime)),
 		IssuedAt:  jwt.NewNumericDate(time.Now()),
 	}
-	// var jwtKey = []byte(os.Getenv("JWT_KEY"))
+	var jwtKey = []byte(os.Getenv("JWT_KEY"))
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	signedToken, err := token.SignedString(jwtKey)

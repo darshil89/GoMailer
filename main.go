@@ -11,9 +11,9 @@ import (
 	emailverifier "github.com/AfterShip/email-verifier"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/joho/godotenv"
 
+	handler "mailingService/api"
 	"mailingService/models"
 )
 
@@ -47,8 +47,8 @@ func main() {
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Mailing Service is up and running")
 	})
-	r.Post("/api/getToken", GetToken)
-	r.Post("/api/sendEmail", authenticate(validateEmail(SendEmail)))
+	r.Post("/api/getToken", handler.GetToken)
+	r.Post("/api/sendEmail", authenticate(validateEmail(handler.SendEmail)))
 
 	fmt.Println("Server listening on port :8080")
 	log.Fatal(http.ListenAndServeTLS(":8080", "server.crt", "server.key", r))
@@ -56,7 +56,7 @@ func main() {
 
 func authenticate(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		signedToken := r.Header.Get("Authorization")
+		// signedToken := r.Header.Get("Authorization")
 		var data models.EmailData
 		err := json.NewDecoder(r.Body).Decode(&data)
 		if err != nil {
@@ -66,13 +66,13 @@ func authenticate(next http.HandlerFunc) http.HandlerFunc {
 
 		log.Printf("Data in authenticate is : %v", data)
 
-		token, err := jwt.ParseWithClaims(signedToken, &jwt.RegisteredClaims{}, func(t *jwt.Token) (interface{}, error) {
-			return jwtKey, nil
-		})
-		if err != nil || !token.Valid {
-			respondWithError(w, http.StatusUnauthorized, "Unauthorized")
-			return
-		}
+		// token, err := jwt.ParseWithClaims(signedToken, &jwt.RegisteredClaims{}, func(t *jwt.Token) (interface{}, error) {
+		// 	return jwtKey, nil
+		// })
+		// if err != nil || !token.Valid {
+		// 	respondWithError(w, http.StatusUnauthorized, "Unauthorized")
+		// 	return
+		// }
 
 		ctx := context.WithValue(r.Context(), "emailData", data)
 
