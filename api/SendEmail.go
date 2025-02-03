@@ -13,7 +13,7 @@ import (
 
 var data models.EmailData
 
-func sendEmail(w http.ResponseWriter, r *http.Request) {
+func SendEmail(w http.ResponseWriter, r *http.Request) {
 
 	data, ok := r.Context().Value("emailData").(models.EmailData)
 	if !ok {

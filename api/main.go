@@ -47,8 +47,8 @@ func main() {
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Mailing Service is up and running")
 	})
-	r.Post("/api/getToken", getToken)
-	r.Post("/api/sendEmail", authenticate(validateEmail(sendEmail)))
+	r.Post("/api/getToken", GetToken)
+	r.Post("/api/sendEmail", authenticate(validateEmail(SendEmail)))
 
 	fmt.Println("Server listening on port :8080")
 	log.Fatal(http.ListenAndServeTLS(":8080", "server.crt", "server.key", r))

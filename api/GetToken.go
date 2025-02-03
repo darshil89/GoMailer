@@ -11,7 +11,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func getToken(w http.ResponseWriter, r *http.Request) {
+func GetToken(w http.ResponseWriter, r *http.Request) {
 	var creds models.Credentials
 	err := json.NewDecoder(r.Body).Decode(&creds)
 	if err != nil {
