@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -22,6 +23,7 @@ func GetToken(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusUnauthorized, "Unauthorised")
 		return
 	}
+	log.Printf("JWT Token: %s", jwtKey)
 
 	expirationTime := time.Hour
 	claims := &jwt.RegisteredClaims{
@@ -31,6 +33,7 @@ func GetToken(w http.ResponseWriter, r *http.Request) {
 		IssuedAt:  jwt.NewNumericDate(time.Now()),
 	}
 	// var jwtKey = []byte(os.Getenv("JWT_KEY"))
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	signedToken, err := token.SignedString(jwtKey)
 	if err != nil {
