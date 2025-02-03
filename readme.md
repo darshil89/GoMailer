@@ -1,5 +1,9 @@
 # 📧 GoMailService - Go-based Mailing Microservice
 
+---
+![Mail](https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExajdwcGo3MmEwemtheXlzcXRwZ2tnaWY3ZmVsMXFuNjl5OW1jMG02eSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/L1cvp6DyWers4Cm0Gn/giphy.gif)
+---
+
 Welcome to **GoMailService**! This is a simple mailing microservice built using Go, designed to send emails and handle basic email validation. This project demonstrates how to create a REST API in Go that can handle email requests and verify the provided email addresses.
 
 ---
@@ -42,9 +46,9 @@ This endpoint send mail using the secret token
 **Request Body:**
 ```json
 {
-  "email": "recipient@example.com",
-  "subject": "Subject of the Email",
-  "message": "Hello, this is the email content!"
+  "email": "test@gmail.com",   
+  "message": "Hello how are you?!",   
+  "name": "Test Name"
 }
 ```
 
