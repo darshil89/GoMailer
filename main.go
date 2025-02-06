@@ -12,7 +12,6 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/joho/godotenv"
 
 	"mailingService/models"
 
@@ -34,11 +33,6 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 }
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-		return
-	}
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
@@ -51,7 +45,8 @@ func main() {
 	r.Post("/api/sendEmail", authenticate(validateEmail(handler.SendEmail)))
 
 	fmt.Println("Server listening on port :8080")
-	log.Fatal(http.ListenAndServeTLS(":8080", "server.crt", "server.key", r))
+	log.Fatal(http.ListenAndServe(":8080", r))
+
 }
 
 func authenticate(next http.HandlerFunc) http.HandlerFunc {
