@@ -1,31 +1,31 @@
 ARG GO_VERSION=1.23.5
-FROM golang:${GO_VERSION}-alpine AS build
+FROM golang:${GO_VERSION}-alpine
 
+# Set the working directory
 WORKDIR /src
 
-# Install dependencies
+# Install runtime dependencies
+RUN apk --update add ca-certificates tzdata && update-ca-certificates
+
+# Copy Go modules and download dependencies
 COPY go.mod go.sum ./
 RUN go mod download
 
-# Copy the rest of the application source code
+# Copy the application source code
 COPY . .
+
+# Copy the email template
 COPY email_template.html /src/email_template.html
 
 # Build the application
 ARG TARGETARCH
 RUN CGO_ENABLED=0 GOARCH=$TARGETARCH go build -o /bin/server .
 
-# Final runtime image
-FROM alpine:latest
+# Ensure the binary is executable
+RUN chmod +x /bin/server
 
-# Install runtime dependencies
-RUN apk --update add ca-certificates tzdata && update-ca-certificates
-
-# Copy the built binary from the build stage
-COPY --from=build /bin/server /bin/
-
-# Expose the port
+# Expose the application port
 EXPOSE 8080
 
 # Run the application
-ENTRYPOINT [ "/bin/server" ]
+ENTRYPOINT ["/bin/server"]
